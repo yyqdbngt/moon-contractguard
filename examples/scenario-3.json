@@ -1,0 +1,9 @@
+{
+  "operation": "schema",
+  "document": {},
+  "schema": {
+    "type": "string",
+    "pattern": "^[a-z]+$"
+  },
+  "value": "123"
+}

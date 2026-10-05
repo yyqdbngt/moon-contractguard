@@ -1,0 +1,310 @@
+[
+  {
+    "name": "response contract",
+    "request": {
+      "document": {
+        "openapi": "3.0.3",
+        "paths": {
+          "/items": {
+            "get": {
+              "parameters": [
+                {
+                  "name": "limit",
+                  "in": "query",
+                  "required": true,
+                  "schema": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/Item"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "Item": {
+              "type": "object",
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "integer"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        }
+      },
+      "cases": [
+        {
+          "method": "GET",
+          "path": "/items",
+          "query": {
+            "limit": 2
+          },
+          "response": {
+            "status": 200,
+            "body": [
+              {
+                "id": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "expected": {
+      "valid": true,
+      "complete": true
+    },
+    "error": false
+  },
+  {
+    "name": "response and request failures",
+    "request": {
+      "document": {
+        "openapi": "3.0.3",
+        "paths": {
+          "/items": {
+            "get": {
+              "parameters": [
+                {
+                  "name": "limit",
+                  "in": "query",
+                  "required": true,
+                  "schema": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/Item"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "Item": {
+              "type": "object",
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "integer"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        }
+      },
+      "cases": [
+        {
+          "method": "get",
+          "path": "/items",
+          "query": {
+            "limit": 0
+          },
+          "response": {
+            "status": 200,
+            "body": [
+              {
+                "id": "wrong"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "expected": {
+      "valid": false
+    },
+    "error": false
+  },
+  {
+    "name": "unsupported is incomplete",
+    "request": {
+      "operation": "schema",
+      "document": {},
+      "schema": {
+        "type": "string",
+        "pattern": "^[a-z]+$"
+      },
+      "value": "123"
+    },
+    "expected": {
+      "valid": true,
+      "complete": false
+    },
+    "error": false
+  },
+  {
+    "name": "oneOf ambiguity",
+    "request": {
+      "operation": "schema",
+      "document": {},
+      "schema": {
+        "oneOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "integer"
+          }
+        ]
+      },
+      "value": 1
+    },
+    "expected": {
+      "valid": false
+    },
+    "error": false
+  },
+  {
+    "name": "nullable",
+    "request": {
+      "operation": "schema",
+      "document": {},
+      "schema": {
+        "type": "string",
+        "nullable": true
+      },
+      "value": null
+    },
+    "expected": {
+      "valid": true
+    },
+    "error": false
+  },
+  {
+    "name": "operation removal",
+    "request": {
+      "operation": "diff",
+      "old": {
+        "openapi": "3.0.3",
+        "paths": {
+          "/items": {
+            "get": {
+              "parameters": [
+                {
+                  "name": "limit",
+                  "in": "query",
+                  "required": true,
+                  "schema": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/Item"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "Item": {
+              "type": "object",
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "integer"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        }
+      },
+      "new": {
+        "openapi": "3.0.3",
+        "paths": {}
+      }
+    },
+    "expected": {
+      "breaking": true
+    },
+    "error": false
+  },
+  {
+    "name": "external reference refused",
+    "request": {
+      "operation": "schema",
+      "document": {},
+      "schema": {
+        "$ref": "https://example.test/schema"
+      },
+      "value": 1
+    },
+    "expected": {},
+    "error": true
+  },
+  {
+    "name": "unique array",
+    "request": {
+      "operation": "schema",
+      "document": {},
+      "schema": {
+        "type": "array",
+        "uniqueItems": true
+      },
+      "value": [
+        {
+          "n": 1
+        },
+        {
+          "n": 1
+        }
+      ]
+    },
+    "expected": {
+      "valid": false
+    },
+    "error": false
+  }
+]

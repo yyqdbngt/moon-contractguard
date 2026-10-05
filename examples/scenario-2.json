@@ -1,0 +1,69 @@
+{
+  "document": {
+    "openapi": "3.0.3",
+    "paths": {
+      "/items": {
+        "get": {
+          "parameters": [
+            {
+              "name": "limit",
+              "in": "query",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Item"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "Item": {
+          "type": "object",
+          "required": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "type": "integer"
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    }
+  },
+  "cases": [
+    {
+      "method": "get",
+      "path": "/items",
+      "query": {
+        "limit": 0
+      },
+      "response": {
+        "status": 200,
+        "body": [
+          {
+            "id": "wrong"
+          }
+        ]
+      }
+    }
+  ]
+}

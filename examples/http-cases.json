@@ -1,0 +1,9 @@
+[
+  {
+    "method": "get",
+    "path": "/items",
+    "query": {
+      "limit": 2
+    }
+  }
+]

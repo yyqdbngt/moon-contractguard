@@ -1,11 +1,17 @@
-# Moon ContractGuard architecture
+# Implemented architecture
 
-Status: development plan; functionality must be checked against release documentation.
+## Core
 
-目标：回答“接口升级是否破坏调用方”和“实际响应是否符合约定”，产出可在 CI 使用的测试报告。
+OpenAPI 3.0 JSON operation inventory; local schema references; typed request parameters; JSON request/response schemas; required fields and additionalProperties; enum/nullable; numeric/string/array/object bounds; uniqueItems; allOf/anyOf/oneOf; bounded validation. Compatibility diff detects removed operations and newly required inputs, with other changes classified for review. scripts/http.mjs checks actual HTTP responses.
 
-核心模块：OpenAPI 3.0 JSON 适配；引用图解析；参数与 schema 模型；兼容性差异分类；样例和边界请求生成；请求/响应校验；本地 HTTP 执行适配；结果报告。复用 HTTP/schema 库时记录版本和来源，核心契约与兼容性语义自行实现。
+## Boundaries
 
-三个场景：订单接口升级导致字段、枚举与状态码变化；前后端联调检查分页与错误响应；第三方服务适配对录制响应与本地桩做验证。每场景都包含已知兼容变更和已知破坏变更，测试真实运行的本地服务。
+A documented OpenAPI 3.0 JSON profile, not complete OpenAPI compliance. Unsupported schema assertions set complete=false; valid=true alone is insufficient. External references, YAML, pattern/format/discriminator/not, response header constraints and non-JSON media are not verified. Compatibility changes with uncertain semantics are review, never automatically declared safe. Path parameter data is path_parameters; path itself is the route template. Query/header parameters must be supplied as typed values matching their schema. Redirects are rejected, response cap 1 MiB, request timeout 10 seconds. HTTP checks can execute supplied methods; use a selected test endpoint.
 
-验收：预标注的兼容性语料分类一致；三场景捕获预先植入的破坏变更；对数百 operations 的规格记录处理耗时。失败验证覆盖引用循环、不存在引用、不支持关键字、响应类型错与参数缺失。未知语义明确拒绝或标记未检查，不能静默作为通过。十月不承诺完整 OpenAPI/YAML/所有 JSON Schema 草案。
+## Integration
+
+The core accepts semantic values and returns deterministic JSON-shaped reports. Host adapters handle files, network or processes; they invoke the compiled MoonBit engine. The CLI package declares `supported_targets = "js"`; other backends test the portable core.
+
+## Validation evidence
+
+Fixture cases are hand-checked assertions. Independent reference checks and integration scripts are runnable from a clean checkout. CI executes four core backends and host checks. Historical proposal targets are not release results.

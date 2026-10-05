@@ -1,0 +1,3 @@
+# Version 0.1.0 boundaries
+
+A documented OpenAPI 3.0 JSON profile, not complete OpenAPI compliance. Unsupported schema assertions set complete=false; valid=true alone is insufficient. External references, YAML, pattern/format/discriminator/not, response header constraints and non-JSON media are not verified. Compatibility changes with uncertain semantics are review, never automatically declared safe. Path parameter data is path_parameters; path itself is the route template. Query/header parameters must be supplied as typed values matching their schema. Redirects are rejected, response cap 1 MiB, request timeout 10 seconds. HTTP checks can execute supplied methods; use a selected test endpoint.
